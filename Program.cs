@@ -1,16 +1,38 @@
+using Dapper;
+using MySql.Data.MySqlClient;
+
 namespace CDB
 {
-    public class Person
+    public class User
     {
         public string ID { get; set; }
         public string Name { get; set; }
-        public int Age { get; set; }
 
-        public Person(string id, string name, int age)
+        public User(string id, string name)
         {
             ID = id;
             Name = name;
-            Age = age;
+        }
+    }
+
+
+    class Program
+    {
+        static void Main()
+        {
+            var connectionString = "Server=127.0.0.1;Port=3306;Uid=user;Pwd=password;Database=db";
+
+            var connection = new MySqlConnection(connectionString);
+
+            connection.Open();
+
+            string sql = "SELECT * FROM User";
+            var users = connection.Query<User>(sql);
+
+            foreach (var user in users)
+            {
+                Console.WriteLine(user.Name + ", " + user.ID);
+            }
         }
     }
 }
