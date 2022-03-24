@@ -1,5 +1,4 @@
 using MySql.Data.MySqlClient;
-using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 
@@ -29,8 +28,9 @@ namespace CDB
             var compiler = new MySqlCompiler();
             var db = new QueryFactory(connection, compiler);
 
-            var user = db.Query().From("User").Get();
-            Console.WriteLine(user);
+            var users = db.Query().From("User").Get<User>();
+            foreach (var user in users)
+                Console.WriteLine(user.ID + ", " + user.Name);
         }
     }
 }
