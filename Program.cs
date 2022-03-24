@@ -28,9 +28,22 @@ namespace CDB
             var compiler = new MySqlCompiler();
             var db = new QueryFactory(connection, compiler);
 
-            var users = db.Query().From("User").Get<User>();
-            foreach (var user in users)
-                Console.WriteLine(user.ID + ", " + user.Name);
+            db.Connection.Open();
+            using (var scope = db.Connection.BeginTransaction())
+            {
+                try
+                {
+                    var users = db.Query().From("Users").Get<User>();
+                    foreach (var user in users)
+                        Console.WriteLine(user.ID + ", " + user.Name);
+                    scope.Commit();
+                }
+                catch
+                {
+                    scope.Rollback();
+                }
+            }
+            db.Connection.Close();
         }
     }
 }
