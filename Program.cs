@@ -1,5 +1,8 @@
-using Dapper;
 using MySql.Data.MySqlClient;
+using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
+
 
 namespace CDB
 {
@@ -23,16 +26,11 @@ namespace CDB
             var connectionString = "Server=127.0.0.1;Port=3306;Uid=user;Pwd=password;Database=db";
 
             var connection = new MySqlConnection(connectionString);
+            var compiler = new MySqlCompiler();
+            var db = new QueryFactory(connection, compiler);
 
-            connection.Open();
-
-            string sql = "SELECT * FROM User";
-            var users = connection.Query<User>(sql);
-
-            foreach (var user in users)
-            {
-                Console.WriteLine(user.Name + ", " + user.ID);
-            }
+            var user = db.Query().From("User").Get();
+            Console.WriteLine(user);
         }
     }
 }
