@@ -7,13 +7,17 @@ namespace CDB
 {
     public class User
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public string Name { get; set; }
+        public string Email { get; set; }
+        public int Age { get; set; }
 
-        public User(string id, string name)
+        public User(int id, string name, string email, int age)
         {
             ID = id;
             Name = name;
+            Email = email;
+            Age = age;
         }
     }
 
@@ -33,14 +37,15 @@ namespace CDB
             {
                 try
                 {
-                    var users = db.Query().From("Users").Get<User>();
+                    var users = db.Query().From("users").Get<User>();
                     foreach (var user in users)
-                        Console.WriteLine(user.ID + ", " + user.Name);
+                        Console.WriteLine(user.ID + ", " + user.Name + ", " + user.Email + ", " + user.Age);
                     scope.Commit();
                 }
                 catch
                 {
                     scope.Rollback();
+                    Console.WriteLine("roll back");
                 }
             }
             db.Connection.Close();
