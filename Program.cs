@@ -24,6 +24,34 @@ namespace CDB
 
     class Program
     {
+        private void ShowTables(MySqlConnection conn)
+        {
+            List<String> tableNames = new List<string>();
+            string query = "show tables";
+            MySqlCommand command = new MySqlCommand(query, conn);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    tableNames.Add(reader.GetString(0));
+                }
+            }
+            foreach (var t in tableNames)
+            {
+                Console.WriteLine(t);
+            }
+        }
+
+        private void ShowUserTable(QueryFactory db)
+        {
+            var users = db.Query().From("User").Get<User>();
+            foreach (var user in users)
+            {
+                Console.WriteLine(user.ID + ", " + user.Name + ", " + user.Email + ", " + user.Age);
+            }
+        }
+
         static void Main()
         {
             var connectionString = "Server=127.0.0.1;Port=3306;Uid=user;Pwd=password;Database=db";
@@ -32,14 +60,16 @@ namespace CDB
             var compiler = new MySqlCompiler();
             var db = new QueryFactory(connection, compiler);
 
+            Program p = new Program();
+
             db.Connection.Open();
             using (var scope = db.Connection.BeginTransaction())
             {
+
                 try
                 {
-                    var users = db.Query().From("User").Get<User>();
-                    foreach (var user in users)
-                        Console.WriteLine(user.ID + ", " + user.Name + ", " + user.Email + ", " + user.Age);
+                    p.ShowTables(connection);
+                    p.ShowUserTable(db);
                     scope.Commit();
                 }
                 catch
