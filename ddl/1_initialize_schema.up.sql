@@ -1,0 +1,7 @@
+CREATE TABLE `User` (
+  id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  age SMALLINT NOT NULL,
+  PRIMARY KEY (id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

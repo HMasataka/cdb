@@ -10,9 +10,9 @@ namespace CDB
         public int ID { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public int Age { get; set; }
+        public Int16 Age { get; set; }
 
-        public User(int id, string name, string email, int age)
+        public User(int id, string name, string email, Int16 age)
         {
             ID = id;
             Name = name;
@@ -37,7 +37,7 @@ namespace CDB
             {
                 try
                 {
-                    var users = db.Query().From("users").Get<User>();
+                    var users = db.Query().From("User").Get<User>();
                     foreach (var user in users)
                         Console.WriteLine(user.ID + ", " + user.Name + ", " + user.Email + ", " + user.Age);
                     scope.Commit();

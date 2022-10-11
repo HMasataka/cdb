@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0.27
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    restart: always
+    networks:
+      - mysql-network
+
+  migrate:
+    image: migrate/migrate:v4.15.1
+    volumes:
+      - ./ddl:/tmp/ddl
+    command: ["-path", "/tmp/ddl", "-database",  "mysql://user:password@tcp(mysql:3306)/db", "up"]
+    networks:
+      - mysql-network
+
+  migrate-down:
+    image: migrate/migrate:v4.15.1
+    volumes:
+      - ./ddl:/tmp/ddl
+    command: ["-path", "/tmp/ddl", "-database",  "mysql://user:password@tcp(mysql:3306)/db", "down"]
+    networks:
+      - mysql-network
+
+  cli:
+    image: mysql:8.0.27
+    networks:
+      - mysql-network
+    command: mysql -hmysql -uuser -ppassword db
+
+networks:
+  mysql-network:
+    driver: bridge
