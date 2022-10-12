@@ -1,4 +1,6 @@
 using MySql.Data.MySqlClient;
+using System.Data;
+
 
 namespace CDB
 {
@@ -21,13 +23,13 @@ namespace CDB
 
     class Program
     {
-        private void ShowTables(MySqlConnection conn)
+        private void ShowTables(IDbConnection conn)
         {
             List<String> tableNames = new List<string>();
-            string query = "show tables";
-            MySqlCommand command = new MySqlCommand(query, conn);
+            IDbCommand command = conn.CreateCommand();
+            command.CommandText = "show tables";
 
-            using (MySqlDataReader reader = command.ExecuteReader())
+            using (IDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -40,12 +42,12 @@ namespace CDB
             }
         }
 
-        private void ShowUserTable(MySqlConnection conn)
+        private void ShowUserTable(IDbConnection conn)
         {
-            string query = "select * from User";
-            MySqlCommand command = new MySqlCommand(query, conn);
+            IDbCommand command = conn.CreateCommand();
+            command.CommandText = "select * from User";
 
-            using (MySqlDataReader reader = command.ExecuteReader())
+            using (IDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
