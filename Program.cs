@@ -1,6 +1,6 @@
 using MySql.Data.MySqlClient;
 using System.Data;
-
+using System.Reflection;
 
 namespace CDB
 {
@@ -51,6 +51,8 @@ namespace CDB
             {
                 while (reader.Read())
                 {
+                    User user = new User(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt16(3));
+                    Console.WriteLine($"ID:{user.ID} Name:{user.Name} Email:{user.Email} Age:{user.Age}");
                     Console.WriteLine($"ID:{reader["id"]} Name:{reader["name"]} Email:{reader["email"]} Age:{reader["age"]}");
                 }
             }
