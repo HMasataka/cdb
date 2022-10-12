@@ -1,7 +1,4 @@
 using MySql.Data.MySqlClient;
-using SqlKata.Compilers;
-using SqlKata.Execution;
-
 
 namespace CDB
 {
@@ -43,12 +40,17 @@ namespace CDB
             }
         }
 
-        private void ShowUserTable(QueryFactory db)
+        private void ShowUserTable(MySqlConnection conn)
         {
-            var users = db.Query().From("User").Get<User>();
-            foreach (var user in users)
+            string query = "select * from User";
+            MySqlCommand command = new MySqlCommand(query, conn);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
             {
-                Console.WriteLine(user.ID + ", " + user.Name + ", " + user.Email + ", " + user.Age);
+                while (reader.Read())
+                {
+                    Console.WriteLine($"ID:{reader["id"]} Name:{reader["name"]} Email:{reader["email"]} Age:{reader["age"]}");
+                }
             }
         }
 
@@ -57,19 +59,16 @@ namespace CDB
             var connectionString = "Server=127.0.0.1;Port=3306;Uid=user;Pwd=password;Database=db";
 
             var connection = new MySqlConnection(connectionString);
-            var compiler = new MySqlCompiler();
-            var db = new QueryFactory(connection, compiler);
 
             Program p = new Program();
 
-            db.Connection.Open();
-            using (var scope = db.Connection.BeginTransaction())
+            connection.Open();
+            using (var scope = connection.BeginTransaction())
             {
-
                 try
                 {
                     p.ShowTables(connection);
-                    p.ShowUserTable(db);
+                    p.ShowUserTable(connection);
                     scope.Commit();
                 }
                 catch
@@ -78,7 +77,7 @@ namespace CDB
                     Console.WriteLine("roll back");
                 }
             }
-            db.Connection.Close();
+            connection.Close();
         }
     }
 }
